@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат обработки</title>
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+<div class="container">
+        <h1 class="title">Результат обработки текста</h1>
+
+        <p><strong>Исходный текст:</strong></p>
+        <p class="original-text">{{ text_data.original_text }}</p>
+
+        <p><strong>Очищенный текст:</strong></p>
+        <p class="cleaned-text" id="cleaned-text">{{ text_data.cleaned_text }}</p>
+
+        <a href="/" class="button">Вернуться назад</a>
+</div>
+
+<!-- Скрипт для подсветки исправленных слов -->
+<script>
+    const originalText = "{{ text_data.original_text|escapejs }}";
+    const cleanedText = "{{ text_data.cleaned_text|escapejs }}";
+
+    const originalWords = originalText.split(/\s+/); // Разделяем по пробелам
+    const cleanedWords = cleanedText.split(/\s+/);
+
+    let highlightedText = "";
+
+    for (let i = 0; i < cleanedWords.length; i++) {
+        // Сравниваем слова без учёта регистра и пунктуации
+        const originalWord = originalWords[i]?.replace(/[.,!?]/g, "").toLowerCase();
+        const cleanedWord = cleanedWords[i]?.replace(/[.,!?]/g, "").toLowerCase();
+
+        if (originalWord !== cleanedWord) {
+            highlightedText += `<span class='highlight'>${cleanedWords[i]}</span> `;
+        } else {
+            highlightedText += `${cleanedWords[i]} `;
+        }
+    }
+
+    document.getElementById("cleaned-text").innerHTML = highlightedText.trim();
+</script>
+
+</body>
+</html>
